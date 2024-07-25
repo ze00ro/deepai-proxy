@@ -1,14 +1,19 @@
-const OPENAI_API_HOST = "api.openai.com";
+const DEEPAI_API_HOST = "api.deepai.org";
 
 Deno.serve(async (request) => {
-  const url = new URL(request.url);
-  url.host = OPENAI_API_HOST;
+  const originalUrl = new URL(request.url);
 
-  const newRequest = new Request(url.toString(), {
+  // 构建新的 URL
+  const targetUrl = new URL(originalUrl.pathname + originalUrl.search, `https://${DEEPAI_API_HOST}`);
+
+  // 创建新的请求
+  const newRequest = new Request(targetUrl.toString(), {
     headers: request.headers,
     method: request.method,
     body: request.body,
     redirect: "follow",
   });
+
+  // 发送请求并返回响应
   return await fetch(newRequest);
 });
